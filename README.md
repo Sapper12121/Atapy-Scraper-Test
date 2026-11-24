@@ -25,13 +25,21 @@ each image has `local_path`, `source_url`, and `quality_score`.
 ## 2. How to run
 
 ```bash
+# 1. Put all .py files + requirements.txt in one folder, keeping the names flat (no subfolders). The scripts reference each other by filename, so they must sit together.
+
+# 2. Create a Python 3.10+ environment and install dependencies
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# full run: scrape up to 100 ads, download all photos, score them, write JSON
+# 3. Run the full pipeline (scrape up to 100 ads, download photos, score them, write JSON):
 python run_pipeline.py --max-ads 100 --images-dir images --out cars_data.json
 
-# smaller smoke run
+# 4. (Optional) Smoke test with fewer ads first:
 python run_pipeline.py --max-ads 20
+
+# 5. (Optional) Verify the output:
+python verify.py
 ```
 
 Options:
@@ -45,6 +53,13 @@ Options:
 
 Re-runs are idempotent: an image already on disk is not re-downloaded, so you
 can resume after an interruption by just running again.
+
+If a long run gets interrupted or throttled
+Instead of starting over, run finalize.py — it rebuilds cars_data.json from the listing data already on disk and re-fetches only the missing detail pages:
+
+```bash
+python finalize.py
+```
 
 ---
 
