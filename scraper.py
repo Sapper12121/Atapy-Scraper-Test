@@ -133,7 +133,7 @@ class TaladRodScraper:
             read=max_retries,
             status=max_retries,
             backoff_factor=backoff_factor,
-            status_forcelist=(429, 500, 502, 503, 504),
+            status_forcelist=(202, 429, 500, 502, 503, 504),
             allowed_methods=frozenset(["GET", "HEAD"]),
             raise_on_status=False,
         )
@@ -164,10 +164,16 @@ class TaladRodScraper:
                                         timeout=self.request_timeout, allow_redirects=True)
                 if resp.status_code == 200:
                     return resp.content if binary else resp.text
-                # Non-200: retry on server errors, give up on 4xx (except 429)
-                if resp.status_code in (429, 500, 502, 503, 504):
+                # Non-200: retry on soft-throttle / server errors.
+                # NOTE: taladrod returns HTTP 202 "Accepted" (instead of 429) when
+                # it wants us to slow down — the body is NOT the image, so we must
+                # retry after a pause, not skip it. A retry almost always returns
+                # the real 200 image. 202/429 get an extra cooldown because they
+                # are explicit throttle signals.
+                if resp.status_code in (202, 429, 500, 502, 503, 504):
+                    extra = 1.5 if resp.status_code in (202, 429) else 0.0
                     self._log(f"    [retry] HTTP {resp.status_code} on {url} (attempt {attempt})")
-                    time.sleep(self.backoff_sleep(attempt))
+                    time.sleep(self.backoff_sleep(attempt) + extra)
                     continue
                 self._log(f"    [skip] HTTP {resp.status_code} on {url}")
                 return None
