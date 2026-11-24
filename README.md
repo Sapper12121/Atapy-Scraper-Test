@@ -25,15 +25,16 @@ each image has `local_path`, `source_url`, and `quality_score`.
 ## 2. How to run
 
 ```bash
-# 1. Put all .py files + requirements.txt in one folder, keeping the names flat (no subfolders). The scripts reference each other by filename, so they must sit together.
+# 1. Put all .py files + requirements.txt in one folder, keeping the names flat (no subfolders). 
+  The scripts reference each other by filename, so they must sit together.
 
 # 2. Create a Python 3.10+ environment and install dependencies
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# 3. Run the full pipeline (scrape up to 100 ads, download photos, score them, write JSON):
-python run_pipeline.py --max-ads 100 --images-dir images --out cars_data.json
+# 3. Run the full pipeline (scrape up to 100 ads, download photos at rate of 1 photo per 2 seconds, score them, write JSON):
+python run_pipeline.py --max-ads 100 --rate 2 --images-dir images --out cars_data.json
 
 # 4. (Optional) Smoke test with fewer ads first:
 python run_pipeline.py --max-ads 20
@@ -121,6 +122,11 @@ in the JSON. Ads commonly have 5–10+ photos; there is no per-ad cap.
 * **Retry** — `urllib3.Retry` on the requests `Session`: 3 attempts, backoff
   factor 0.6, retries on 429/500/502/503/504 and connection errors. A second
   manual retry loop wraps each request for robustness.
+  *Note on HTTP 202:* taladrod returns `202 Accepted` (not 429) as a soft
+  throttle signal — the body is not the image, so a 202 must be retried after a
+  pause, not skipped. Both the urllib3 `status_forcelist` and the manual loop
+  treat 202 as retryable, with an extra 1.5s cooldown on 202/429 to let the site
+  un-throttle before the next attempt.
 * **Rate limiting** — configurable sleep (`--rate`, default 1.0s) with
   ±0.3s jitter between every request, plus a browser-like `User-Agent` and a
   `Referer` header on detail/image requests, to avoid being blocked.
