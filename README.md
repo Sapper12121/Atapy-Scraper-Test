@@ -26,7 +26,7 @@ each image has `local_path`, `source_url`, and `quality_score`.
 
 ```bash
 # 1. Put all .py files + requirements.txt in one folder, keeping the names flat (no subfolders). 
-  The scripts reference each other by filename, so they must sit together.
+# The scripts reference each other by filename, so they must sit together.
 
 # 2. Create a Python 3.10+ environment and install dependencies
 python -m venv venv
