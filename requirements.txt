@@ -1,0 +1,11 @@
+# Dependencies for the taladrod.com scraper pipeline.
+# Tested with Python 3.12. All packages are pip-installable and pure-local
+# (no external LLM / Vision API calls are made at any point).
+
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+numpy>=1.24.0
+opencv-python>=4.8.0
+scikit-image>=0.21.0
+scipy>=1.10.0
+Pillow>=10.0.0
