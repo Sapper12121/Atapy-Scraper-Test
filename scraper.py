@@ -28,9 +28,8 @@ Step 3 — IMAGES: download every gallery image to a local folder, recording
 
 SELECTION METHOD (required by the assignment to be stated in code):
     We take the FIRST `max_ads` cars in the order the website lists them
-    (newest listings first, because fno:new = "cars posted today"). This is
-    the "เรียงตามที่เว็บแสดงผล" option explicitly allowed by the assignment.
-    Cars already marked sold (`issold:"Y"`) are skipped.
+    (newest listings first, because fno:new = "cars posted today") and skip 
+    any that are already marked sold (`issold:"Y"`). 
 
 STABILITY (1.3):
     - HTTP retries with exponential backoff via urllib3 Retry (3 attempts,

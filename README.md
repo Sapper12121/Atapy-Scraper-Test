@@ -139,8 +139,7 @@ in the JSON. Ads commonly have 5–10+ photos; there is no per-ad cap.
 ### 4.4 Selection method (required to be stated)
 We take the **first `max_ads` cars in the order the website displays them**
 (`fno:new` = newest listings first) and skip any car already marked sold
-(`issold:"Y"`). This is the "เรียงตามที่เว็บแสดงผล" option the assignment
-explicitly allows.
+(`issold:"Y"`). 
 
 ---
 
@@ -166,7 +165,7 @@ rule-based approach is more appropriate than training an ML model.
 
 ## 6. Part 3 — Image quality assessment (image_quality.py)
 
-### Chosen approach: **Hybrid Classical CV IQA** (local, no external API)
+### Chosen approach: **Classical CV** (local, no external API)
 
 **Why this and not NIMA / MUSIQ / CLIP-IQA?** The assignment forbids external
 LLM/Vision APIs (GPT-4V, Claude Vision, Gemini Vision). Deep-learning IQA
@@ -174,11 +173,11 @@ models (NIMA, MUSIQ, HyperIQA, MANIQA) and CLIP-IQA are *local* and therefore
 allowed, but they require PyTorch + pretrained weight files (tens–hundreds of
 MB) downloaded from the internet, which makes the pipeline slow and fragile
 when batch-scoring hundreds of photos and ties it to a weight download that
-may fail. Classical CV metrics, by contrast, run instantly with OpenCV /
+may fail. 
+
+Classical CV metrics, by contrast, run instantly with OpenCV /
 scikit-image, need **no weights**, and every sub-score is explainable and maps
-to a factor a human reviewer cares about for a listing photo. This also
-matches the assignment's **Hybrid** row: we compute several complementary CV
-metrics and combine them.
+to a factor a human reviewer cares about for a listing photo. 
 
 ### Sub-metrics (each normalized to 0–10, 10 = best)
 | metric | what it measures | method |

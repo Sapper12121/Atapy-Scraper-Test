@@ -2,7 +2,7 @@
 image_quality.py — Local, no-API image quality assessment (IQA) for car photos.
 
 ============================================================================
-CHOSEN APPROACH: Hybrid Classical CV IQA  (no external LLM / Vision API)
+CHOSEN APPROACH: Classical CV IQA  (no external LLM / Vision API)
 ============================================================================
 
 Why Classical CV instead of NIMA / MUSIQ / CLIP-IQA?
@@ -13,18 +13,16 @@ Why Classical CV instead of NIMA / MUSIQ / CLIP-IQA?
      internet. This sandbox does not ship torch/transformers/open_clip, and
      relying on a weight download makes the pipeline fragile and slow when
      batch-scoring hundreds of images.
+
   2. Classical CV metrics run instantly with OpenCV/scikit-image, need no
      weights, and every sub-score is explainable and maps to a factor a human
      reviewer cares about for a car listing photo: sharpness (blur), exposure
      (too dark / too bright), contrast/tonal range, and colour richness.
+
   3. The resulting 0-10 score is a weighted blend of these explainable
      sub-scores, so a low score can be diagnosed ("blurry", "underexposed"),
      which is more useful for a data team than an opaque number.
 
-This satisfies the assignment's "Hybrid" row too: we compute several
-complementary CV metrics and combine them. We do not call any external API.
-
-The score is normalized to 0.0 - 10.0 (one decimal, e.g. 8.5) as requested.
 """
 
 from __future__ import annotations
